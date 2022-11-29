@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="titleText"
+            type="String" />
+
+        <variable
+            name="dateText"
+            type="String" />
+
+        <variable
+            name="usernameText"
+            type="String" />
+
+        <variable
+            name="priceText"
+            type="String" />
+
+        <variable
+            name="briefContentText"
+            type="String" />
+
+        <variable
+            name="coverImageUrl"
+            type="String" />
+
+        <variable
+            name="coverType"
+            type="String" />
+
+        <variable
+            name="postId"
+            type="String" />
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:maxLines="2"
+                android:text="@{titleText}"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/image_view"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="标题标题" />
+
+            <ImageView
+                android:id="@+id/image_view"
+                android:layout_width="128dp"
+                android:layout_height="0dp"
+                android:scaleType="centerInside"
+                app:layout_constraintBottom_toBottomOf="@+id/brief_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/post_time"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:maxLines="1"
+                android:text="@{dateText}"
+                app:layout_constraintEnd_toStartOf="@+id/image_view"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title"
+                tools:text="2022年11月28日 23:18" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/brief_content"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:maxLines="3"
+                android:minLines="2"
+                android:text="@{briefContentText}"
+                app:layout_constraintEnd_toStartOf="@+id/image_view"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/post_time"
+                tools:text="内容内容内容\n内容内容\n内容" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:maxLines="1"
+                android:text="@{usernameText}"
+                app:layout_constraintBottom_toBottomOf="@+id/user_avatar"
+                app:layout_constraintEnd_toStartOf="@+id/price"
+                app:layout_constraintStart_toEndOf="@+id/user_avatar"
+                app:layout_constraintTop_toBottomOf="@+id/brief_content"
+                tools:text="用户名" />
+
+            <ImageView
+                android:id="@+id/user_avatar"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/brief_content" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_round_corner_rectangle"
+                android:padding="4dp"
+                android:text="@{priceText}"
+                app:layout_constraintBottom_toBottomOf="@+id/user_avatar"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/brief_content"
+                tools:text="100 日元" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+</layout>

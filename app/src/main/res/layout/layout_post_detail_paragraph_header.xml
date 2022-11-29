@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="text"
+            type="String" />
+    </data>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="match_parent"
+        android:autoLink="all"
+        android:layout_height="wrap_content"
+        android:text="@={text}"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        tools:text="文本文本\n文本">
+
+    </com.google.android.material.textview.MaterialTextView>
+</layout>
