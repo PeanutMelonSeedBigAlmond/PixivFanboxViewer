@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import cc.shinichi.library.glide.progress.ProgressManager
 import com.bumptech.glide.Glide
-import com.bumptech.glide.GlideBuilder
 import com.bumptech.glide.Registry
 import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader
@@ -24,7 +23,7 @@ class GlideLoadComponent : AppGlideModule() {
             OkHttpUrlLoader.Factory(
                 ProgressManager.okHttpClient
                     .newBuilder()
-                    .addInterceptor(HeaderInterceptor("FANBOXSESSID=${CookieRepository.fanboxSessionId}"))
+                    .addInterceptor(HeaderInterceptor(CookieRepository.cookie))
                     .addInterceptor {
                         val url = it.request().url().toString()
                         Log.i(this::class.simpleName, "Loading image: $url")

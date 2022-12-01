@@ -2,11 +2,11 @@ package moe.peanutmelonseedbigalmond.pixivfanboxviewer.network
 
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import moe.peanutmelonseedbigalmond.pixivfanboxviewer.data.CookieRepository
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.network.interceptor.HeaderInterceptor
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.network.response.FanboxInfoData
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.network.response.PostData
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.network.response.PostItemData
-import moe.peanutmelonseedbigalmond.pixivfanboxviewer.data.CookieRepository
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.network.response.SubscribedPostsData
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -15,7 +15,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 
 object Client {
     private val client = OkHttpClient.Builder()
-        .addInterceptor(HeaderInterceptor("FANBOXSESSID=${CookieRepository.fanboxSessionId}"))
+        .addInterceptor(HeaderInterceptor(CookieRepository.cookie))
         .build()
     private val service = Retrofit.Builder()
         .baseUrl(Api.baseUrl)

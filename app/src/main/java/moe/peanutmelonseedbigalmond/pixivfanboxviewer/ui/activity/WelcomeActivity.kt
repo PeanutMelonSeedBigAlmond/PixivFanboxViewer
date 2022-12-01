@@ -2,24 +2,17 @@ package moe.peanutmelonseedbigalmond.pixivfanboxviewer.ui.activity
 
 import android.os.Bundle
 import com.dylanc.longan.startActivity
-import kotlinx.coroutines.*
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.data.CookieRepository
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.ui.activity.base.BaseActivity
 
-class WelcomeActivity : BaseActivity(), CoroutineScope by CoroutineScope(Dispatchers.Main) {
+class WelcomeActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val cookie = CookieRepository.fanboxSessionId
-        if (cookie.isBlank()) {
-            startActivity<LoginActivity>()
-        } else {
+        if (CookieRepository.cookieValid) {
             startActivity<HomeActivity>()
+        } else {
+            startActivity<LoginActivity>()
         }
         finish()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        cancel()
     }
 }

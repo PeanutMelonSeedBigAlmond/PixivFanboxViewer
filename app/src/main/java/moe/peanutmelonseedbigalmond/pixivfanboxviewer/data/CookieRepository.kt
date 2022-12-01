@@ -5,4 +5,9 @@ import com.dylanc.mmkv.mmkvString
 
 object CookieRepository : MMKVOwner {
     var fanboxSessionId by mmkvString("")
+
+    val cookie: String
+        get() = "FANBOXSESSID=$fanboxSessionId"
+    val cookieValid: Boolean
+        get() = fanboxSessionId.isNotBlank()
 }
