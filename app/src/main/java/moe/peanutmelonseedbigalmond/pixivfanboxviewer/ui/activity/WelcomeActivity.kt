@@ -3,16 +3,18 @@ package moe.peanutmelonseedbigalmond.pixivfanboxviewer.ui.activity
 import android.os.Bundle
 import com.dylanc.longan.startActivity
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.data.CookieRepository
-import moe.peanutmelonseedbigalmond.pixivfanboxviewer.ui.activity.base.BaseActivity
+import moe.peanutmelonseedbigalmond.pixivfanboxviewer.databinding.ActivityWelcomeBinding
+import moe.peanutmelonseedbigalmond.pixivfanboxviewer.ui.activity.base.BaseDataViewBindingActivity
 
-class WelcomeActivity : BaseActivity() {
+class WelcomeActivity : BaseDataViewBindingActivity<ActivityWelcomeBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         if (CookieRepository.cookieValid) {
             startActivity<HomeActivity>()
-        } else {
-            startActivity<LoginActivity>()
+            finish()
         }
-        finish()
+        super.onCreate(savedInstanceState)
     }
+
+    override fun createViewDataBinding(): ActivityWelcomeBinding =
+        ActivityWelcomeBinding.inflate(layoutInflater)
 }

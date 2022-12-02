@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/navigation_login"
+    app:startDestination="@id/loginMainFragment">
+
+    <fragment
+        android:id="@+id/loginMainFragment"
+        android:name="moe.peanutmelonseedbigalmond.pixivfanboxviewer.ui.fragment.LoginMainFragment"
+        android:label="LoginMainFragment">
+        <action
+            android:id="@+id/action_loginMainFragment_to_loginInputCookieFragment"
+            app:destination="@id/loginInputCookieFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginInputCookieFragment"
+        android:name="moe.peanutmelonseedbigalmond.pixivfanboxviewer.ui.fragment.LoginInputCookieFragment"
+        android:label="LoginInputCookieFragment" />
+</navigation>
