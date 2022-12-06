@@ -2,15 +2,11 @@ package moe.peanutmelonseedbigalmond.pixivfanboxviewer.ui.fragment
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -29,7 +25,6 @@ import com.dylanc.longan.*
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.*
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.R
-import moe.peanutmelonseedbigalmond.pixivfanboxviewer.data.PreferenceRepository
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.databinding.ActivityHomeBinding
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.databinding.FragmentPostDetailBinding
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.databinding.LayoutPostDetailEmbedFanboxBinding
@@ -185,25 +180,27 @@ class PostDetailFragment : BaseFragment<FragmentPostDetailBinding>(),
             if (data.type != "image") return@setOnItemClickListener
             val itemId = data.content
             val images = vm.postBody.value!!.imageMap
-            val index = images.keys.indexOf(itemId)
 
-            val imageInfoList = images.map { im ->
-                ImageInfo().also {
-                    it.thumbnailUrl = im.value.thumbnailUrl
-                    it.originUrl = im.value.originalUrl
+            val orderedImageKeys = adapter.items.filter { it.type == "image" }.map { it.content }
+            val index = orderedImageKeys.indexOf(itemId)
+            val orderedImages = orderedImageKeys.map {
+                val item = images[it]!!
+                return@map ImageInfo().also { im ->
+                    im.originUrl = item.originalUrl
+                    im.thumbnailUrl = item.thumbnailUrl
                 }
             }.toMutableList()
 
             ImagePreview.instance
                 .setContext(requireActivity())
-                .setImageInfoList(imageInfoList)
+                .setImageInfoList(orderedImages)
                 .setIndex(index)
                 .setDownloadClickListener(object : OnDownloadClickListener() {
                     override val isInterceptDownload: Boolean
                         get() = true
 
                     override fun onClick(activity: Activity?, view: View?, position: Int) {
-                        val imageData = imageInfoList[position]
+                        val imageData = orderedImages[position]
                         Log.i(this@PostDetailFragment::class.simpleName, imageData.toString())
                     }
                 })
