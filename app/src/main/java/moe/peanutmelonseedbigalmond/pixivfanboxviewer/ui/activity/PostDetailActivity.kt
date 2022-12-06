@@ -2,6 +2,7 @@ package moe.peanutmelonseedbigalmond.pixivfanboxviewer.ui.activity
 
 import android.os.Bundle
 import android.widget.FrameLayout
+import androidx.fragment.app.FragmentTransaction
 import com.dylanc.longan.intentExtras
 import com.dylanc.longan.safeIntentExtras
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.ui.activity.base.BaseActivity
@@ -25,6 +26,7 @@ class PostDetailActivity : BaseActivity() {
         setContentView(rootView)
 
         supportFragmentManager.beginTransaction()
+            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
             .replace(
                 rootViewId, PostDetailFragment.newInstance(
                     postId, title, username, coverUrl, coverType
