@@ -38,6 +38,7 @@ data class PostData(
             return when (type) {
                 "article" -> ArticlePostBodyData(mBody)
                 "image" -> ImagePostBodyData(mBody)
+                "text" -> TextPostBodyData(mBody)
                 else -> throw UnsupportedOperationException("不支持的文章类型：$type")
             }
         }

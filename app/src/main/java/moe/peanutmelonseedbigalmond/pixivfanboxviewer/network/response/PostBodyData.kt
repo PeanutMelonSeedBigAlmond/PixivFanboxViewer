@@ -93,3 +93,21 @@ class ImagePostBodyData(private val body: JsonObject) : PostBodyData() {
         return "ImagePostBodyData(blocks=$blocks, imageMap=$imageMap)"
     }
 }
+
+class TextPostBodyData(private val body: JsonObject) : PostBodyData() {
+    override val blocks: List<PostBodyBlockData>
+        get() {
+            val textContent = body["text"].asString
+            return listOf(PostBodyBlockData("p").also {
+                it.setText(textContent)
+            })
+        }
+    override val imageMap: Map<String, ImageMapData>
+        get() = emptyMap()
+    override val fileMap: Map<String, FileMapData>
+        get() = emptyMap()
+    override val embedMap: Map<String, Any>
+        get() = emptyMap()
+    override val urlEmbedMap: Map<String, UrlEmbedMapData>
+        get() = emptyMap()
+}
