@@ -1,0 +1,3 @@
+[submodule "BigImageViewPager"]
+	path = BigImageViewPager
+	url = git@github.com:PeanutMelonSeedBigAlmond/BigImageViewPager.git

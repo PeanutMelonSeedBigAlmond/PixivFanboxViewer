@@ -4,27 +4,31 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import cc.shinichi.library.ImagePreview
 import cc.shinichi.library.bean.ImageInfo
+import cc.shinichi.library.view.ImagePreviewActivity
 import cc.shinichi.library.view.listener.OnDownloadClickListener
+import cc.shinichi.library.view.listener.SAFDirectoryPermissionListener
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.dylanc.longan.*
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.*
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.R
+import moe.peanutmelonseedbigalmond.pixivfanboxviewer.data.PreferenceRepository
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.databinding.ActivityHomeBinding
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.databinding.FragmentPostDetailBinding
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.databinding.LayoutPostDetailEmbedFanboxBinding
@@ -35,6 +39,8 @@ import moe.peanutmelonseedbigalmond.pixivfanboxviewer.ui.activity.HomeActivity
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.ui.activity.PostDetailActivity
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.ui.adapter.PostDetailContentAdapter
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.ui.viewmodel.PostDetailFragmentVM
+import moe.peanutmelonseedbigalmond.pixivfanboxviewer.util.DownloadPictureUtil
+import moe.peanutmelonseedbigalmond.pixivfanboxviewer.util.SAFUtil
 
 class PostDetailFragment : BaseFragment<FragmentPostDetailBinding>(),
     CoroutineScope by CoroutineScope(Dispatchers.Main) {
@@ -185,27 +191,48 @@ class PostDetailFragment : BaseFragment<FragmentPostDetailBinding>(),
             val index = orderedImageKeys.indexOf(itemId)
             val orderedImages = orderedImageKeys.map {
                 val item = images[it]!!
-                return@map ImageInfo().also { im ->
-                    im.originUrl = item.originalUrl
-                    im.thumbnailUrl = item.thumbnailUrl
+                return@map ImageInfo().also {
+                    it.thumbnailUrl = item.thumbnailUrl
+                    it.originUrl = item.originalUrl
                 }
             }.toMutableList()
 
-            ImagePreview.instance
-                .setContext(requireActivity())
+            ImagePreview
+                .instance
                 .setImageInfoList(orderedImages)
                 .setIndex(index)
+                .setContext(requireActivity())
                 .setDownloadClickListener(object : OnDownloadClickListener() {
+                    override fun onClick(activity: Activity?, view: View?, position: Int) {
+                        if (SAFUtil.checkUriPermission(
+                                activity!!,
+                                PreferenceRepository.lastAuthorizedUri
+                            )
+                        ) {
+                            Toast.makeText(context, "开始下载", Toast.LENGTH_SHORT).show()
+                            DownloadPictureUtil.startDownload(
+                                activity,
+                                PreferenceRepository.lastAuthorizedUri!!,
+                                orderedImages[position].originUrl
+                            )
+                        } else {
+                            if (activity is ImagePreviewActivity) {
+                                activity.requireDirectoryAccess()
+                            }
+                        }
+                    }
+
                     override val isInterceptDownload: Boolean
                         get() = true
-
-                    override fun onClick(activity: Activity?, view: View?, position: Int) {
-                        val imageData = orderedImages[position]
-                        Log.i(this@PostDetailFragment::class.simpleName, imageData.toString())
+                })
+                .setSAFDirectoryPermissionListener(object : SAFDirectoryPermissionListener {
+                    override fun onGranted(root: DocumentFile) {
+                        PreferenceRepository.lastAuthorizedUri = root.uri.toString()
                     }
                 })
                 .start()
         }
+
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
 
