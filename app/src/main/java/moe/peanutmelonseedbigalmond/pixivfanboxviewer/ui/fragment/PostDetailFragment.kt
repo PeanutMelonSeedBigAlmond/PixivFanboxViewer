@@ -34,6 +34,7 @@ import moe.peanutmelonseedbigalmond.pixivfanboxviewer.databinding.FragmentPostDe
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.databinding.LayoutPostDetailEmbedFanboxBinding
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.databinding.LayoutPostDetailUrlEmbedWithBrowserBinding
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.network.Client
+import moe.peanutmelonseedbigalmond.pixivfanboxviewer.network.response.ImagePostBodyData
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.network.response.PostBodyData
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.ui.activity.HomeActivity
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.ui.activity.PostDetailActivity
@@ -237,14 +238,38 @@ class PostDetailFragment : BaseFragment<FragmentPostDetailBinding>(),
         binding.recyclerView.adapter = adapter
 
         try {
-            val viewData = body.blocks.map {
-                return@map PostDetailContentAdapter.ViewData(
-                    type = it.type,
-                    content = it.content,
-                    style = it.styles
-                )
+            val viewDataList = mutableListOf<PostDetailContentAdapter.ViewData>()
+            // 特殊判断
+            when (body) {
+                // 如果 post 类型是 image
+                is ImagePostBodyData -> {
+                    viewDataList.addAll(body.imageMap.map {
+                        return@map PostDetailContentAdapter.ViewData(
+                            type = "image",
+                            content = it.key,
+                            style = null
+                        )
+                    })
+
+                    viewDataList.addAll(body.blocks.map {
+                        return@map PostDetailContentAdapter.ViewData(
+                            type = it.type,
+                            content = it.content,
+                            style = it.styles
+                        )
+                    })
+                }
+                else -> {
+                    viewDataList.addAll(body.blocks.map {
+                        return@map PostDetailContentAdapter.ViewData(
+                            type = it.type,
+                            content = it.content,
+                            style = it.styles
+                        )
+                    })
+                }
             }
-            adapter.submitList(viewData)
+            adapter.submitList(viewDataList)
         } catch (e: Exception) {
             e.printStackTrace()
             Snackbar.make(
