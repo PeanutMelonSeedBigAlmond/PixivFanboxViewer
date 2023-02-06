@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -19,40 +18,18 @@
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:background="?attr/colorSurface"
                 android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorSurface"
                 android:theme="?attr/dynamicColorThemeOverlay"
                 app:popupTheme="@style/AppTheme.PopupOverlay"
                 app:title="投稿" />
-
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tab_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <com.google.android.material.tabs.TabItem
-                    android:id="@+id/tab_item_all_post"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:text="全部投稿" />
-
-                <com.google.android.material.tabs.TabItem
-                    android:id="@+id/tab_item_subscribed_post"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:text="已订阅的投稿" />
-            </com.google.android.material.tabs.TabLayout>
         </com.google.android.material.appbar.AppBarLayout>
 
-        <moe.peanutmelonseedbigalmond.pixivfanboxviewer.ui.view.ViewPager2Container
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/container"
+            android:name="moe.peanutmelonseedbigalmond.pixivfanboxviewer.ui.fragment.AllPostFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
-
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/view_pager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </moe.peanutmelonseedbigalmond.pixivfanboxviewer.ui.view.ViewPager2Container>
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

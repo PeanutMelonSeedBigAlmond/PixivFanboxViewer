@@ -14,7 +14,6 @@ import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.documentfile.provider.DocumentFile
-import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import cc.shinichi.library.ImagePreview
@@ -24,19 +23,20 @@ import cc.shinichi.library.view.listener.OnDownloadClickListener
 import cc.shinichi.library.view.listener.SAFDirectoryPermissionListener
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.dylanc.longan.*
+import com.dylanc.longan.arguments
+import com.dylanc.longan.safeArguments
+import com.dylanc.longan.startActivity
+import com.dylanc.longan.withArguments
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.*
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.R
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.data.PreferenceRepository
-import moe.peanutmelonseedbigalmond.pixivfanboxviewer.databinding.ActivityHomeBinding
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.databinding.FragmentPostDetailBinding
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.databinding.LayoutPostDetailEmbedFanboxBinding
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.databinding.LayoutPostDetailUrlEmbedWithBrowserBinding
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.network.Client
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.network.response.ImagePostBodyData
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.network.response.PostBodyData
-import moe.peanutmelonseedbigalmond.pixivfanboxviewer.ui.activity.HomeActivity
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.ui.activity.PostDetailActivity
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.ui.adapter.PostDetailContentAdapter
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.ui.viewmodel.PostDetailFragmentVM
@@ -139,56 +139,21 @@ class PostDetailFragment : BaseFragment<FragmentPostDetailBinding>(),
                         e.printStackTrace()
                     }
                 } else if (viewBinding is LayoutPostDetailEmbedFanboxBinding) {
-                    val activity = requireActivity()
-                    if (activity is HomeActivity) {
-                        val binding =
-                            DataBindingUtil.findBinding<ViewDataBinding?>(activity.contentView)
-
-                        if (binding is ActivityHomeBinding) {
-                            val rightContainer = binding.rightContainer
-                            if (rightContainer != null) {
-                                val fm = activity.supportFragmentManager
-                                fm.beginTransaction()
-                                    .replace(
-                                        rightContainer.id, newInstance(
-                                            title = viewBinding.titleText!!,
-                                            username = viewBinding.usernameText!!,
-                                            coverType = viewBinding.coverType,
-                                            coverUrl = viewBinding.coverImageUrl,
-                                            postId = viewBinding.postId!!
-                                        )
-                                    )
-                                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                                    .addToBackStack(null)
-                                    .commit()
-                            } else {
-                                startActivity<PostDetailActivity>(
-                                    "title" to viewBinding.titleText,
-                                    "username" to viewBinding.usernameText,
-                                    "coverType" to viewBinding.coverType,
-                                    "coverUrl" to viewBinding.coverImageUrl,
-                                    "postId" to viewBinding.postId
-                                )
-                            }
-                        }
-                    } else {
-                        startActivity<PostDetailActivity>(
-                            "title" to viewBinding.titleText,
-                            "username" to viewBinding.usernameText,
-                            "coverType" to viewBinding.coverType,
-                            "coverUrl" to viewBinding.coverImageUrl,
-                            "postId" to viewBinding.postId
-                        )
-                    }
-                } else {
-                    return@setOnItemClickListener
+                    startActivity<PostDetailActivity>(
+                        "title" to viewBinding.titleText,
+                        "username" to viewBinding.usernameText,
+                        "coverType" to viewBinding.coverType,
+                        "coverUrl" to viewBinding.coverImageUrl,
+                        "postId" to viewBinding.postId
+                    )
                 }
             }
             if (data.type != "image") return@setOnItemClickListener
             val itemId = data.content
             val images = vm.postBody.value!!.imageMap
 
-            val orderedImageKeys = adapter.items.filter { it.type == "image" }.map { it.content }
+            val orderedImageKeys =
+                adapter.items.filter { it.type == "image" }.map { it.content }
             val index = orderedImageKeys.indexOf(itemId)
             val orderedImages = orderedImageKeys.map {
                 val item = images[it]!!

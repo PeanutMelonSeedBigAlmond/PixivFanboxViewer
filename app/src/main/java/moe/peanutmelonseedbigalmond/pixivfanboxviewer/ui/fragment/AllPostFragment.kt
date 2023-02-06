@@ -4,11 +4,11 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.slidingpanelayout.widget.SlidingPaneLayout
 import com.chad.library.adapter.base.QuickAdapterHelper
 import com.chad.library.adapter.base.loadState.LoadState
 import com.chad.library.adapter.base.loadState.trailing.TrailingLoadStateAdapter
@@ -33,6 +33,21 @@ class AllPostFragment : BaseFragment<FragmentAllPostBinding>(),
     override val layoutId: Int
         get() = R.layout.fragment_all_post
 
+    override fun onResume() {
+        super.onResume()
+        WindowCompat.setDecorFitsSystemWindows(requireActivity().window, false)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.appBarLayout) { v, windowsInserts ->
+            val inserts = windowsInserts.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                topMargin = inserts.top
+                bottomMargin = inserts.bottom
+                leftMargin = inserts.left
+                rightMargin = inserts.right
+            }
+            return@setOnApplyWindowInsetsListener WindowInsetsCompat.CONSUMED
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -49,33 +64,13 @@ class AllPostFragment : BaseFragment<FragmentAllPostBinding>(),
             val data = adapter.getItem(position)
             Log.i(this@AllPostFragment::class.simpleName, data.toString())
             if (data != null) {
-                val rightContainerView =
-                    requireActivity().findViewById<ViewGroup?>(R.id.right_container)
-                if (rightContainerView != null) {
-                    parentFragmentManager
-                        .popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-                    parentFragmentManager.beginTransaction()
-                        .replace(
-                            rightContainerView.id,
-                            PostDetailFragment.newInstance(
-                                postId = data.id,
-                                username = data.user.name,
-                                title = data.title,
-                                coverUrl = data.cover?.url,
-                                coverType = data.cover?.type
-                            )
-                        )
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                        .commit()
-                } else {
-                    startActivity<PostDetailActivity>(
-                        "postId" to data.id,
-                        "title" to data.title,
-                        "username" to data.user.name,
-                        "coverUrl" to data.cover?.url,
-                        "coverType" to data.cover?.type
-                    )
-                }
+                startActivity<PostDetailActivity>(
+                    "postId" to data.id,
+                    "title" to data.title,
+                    "username" to data.user.name,
+                    "coverUrl" to data.cover?.url,
+                    "coverType" to data.cover?.type
+                )
             } else {
                 Snackbar.make(binding.container, "data is null", Snackbar.LENGTH_SHORT).show()
             }
