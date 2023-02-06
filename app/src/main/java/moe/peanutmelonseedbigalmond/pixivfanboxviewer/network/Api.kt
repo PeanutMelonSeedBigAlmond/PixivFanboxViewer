@@ -18,8 +18,13 @@ interface Api {
         @Query("limit") pageSize: Int = 10
     ): ResponseWrapper<SubscribedPostsData>
 
+    @GET("/post.listSupporting")
+    suspend fun getSupportingPosts(
+        @Query("limit") pageSize: Int = 10
+    ): ResponseWrapper<SubscribedPostsData>
+
     @GET
-    suspend fun getSubscribedPostsByUrl(
+    suspend fun getPostsByUrl(
         @Url url: String
     ): ResponseWrapper<SubscribedPostsData>
 

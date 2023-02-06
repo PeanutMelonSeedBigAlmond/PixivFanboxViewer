@@ -6,4 +6,6 @@ import moe.peanutmelonseedbigalmond.pixivfanboxviewer.ui.activity.base.BaseDataV
 class HomeActivity : BaseDataViewBindingActivity<ActivityHomeBinding>() {
     override fun createViewDataBinding(): ActivityHomeBinding =
         ActivityHomeBinding.inflate(layoutInflater)
+
+
 }

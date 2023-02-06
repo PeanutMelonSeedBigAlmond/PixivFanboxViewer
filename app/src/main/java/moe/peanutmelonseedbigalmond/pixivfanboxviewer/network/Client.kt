@@ -57,7 +57,21 @@ object Client {
         val response = if (url == null) {
             service.getSubscribedPosts()
         } else {
-            service.getSubscribedPostsByUrl(url)
+            service.getPostsByUrl(url)
+        }
+
+        if (response.error != null) {
+            throw Exception(response.error)
+        }
+
+        return response.body
+    }
+
+    suspend fun getSupportingPostData(url: String? = null): SubscribedPostsData {
+        val response = if (url == null) {
+            service.getSupportingPosts()
+        } else {
+            service.getPostsByUrl(url)
         }
 
         if (response.error != null) {

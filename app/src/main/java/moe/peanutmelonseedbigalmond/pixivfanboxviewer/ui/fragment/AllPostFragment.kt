@@ -2,12 +2,12 @@ package moe.peanutmelonseedbigalmond.pixivfanboxviewer.ui.fragment
 
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updateLayoutParams
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.MenuProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chad.library.adapter.base.QuickAdapterHelper
 import com.chad.library.adapter.base.loadState.LoadState
@@ -16,6 +16,7 @@ import com.dylanc.longan.startActivity
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.*
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.R
+import moe.peanutmelonseedbigalmond.pixivfanboxviewer.data.PreferenceRepository
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.databinding.FragmentAllPostBinding
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.network.Client
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.ui.activity.PostDetailActivity
@@ -33,23 +34,10 @@ class AllPostFragment : BaseFragment<FragmentAllPostBinding>(),
     override val layoutId: Int
         get() = R.layout.fragment_all_post
 
-    override fun onResume() {
-        super.onResume()
-        WindowCompat.setDecorFitsSystemWindows(requireActivity().window, false)
-        ViewCompat.setOnApplyWindowInsetsListener(binding.appBarLayout) { v, windowsInserts ->
-            val inserts = windowsInserts.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                topMargin = inserts.top
-                bottomMargin = inserts.bottom
-                leftMargin = inserts.left
-                rightMargin = inserts.right
-            }
-            return@setOnApplyWindowInsetsListener WindowInsetsCompat.CONSUMED
-        }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        setupActionBar()
 
         binding.swipeRefreshLayout.setOnRefreshListener {
             adapter.submitList(emptyList())
@@ -94,14 +82,30 @@ class AllPostFragment : BaseFragment<FragmentAllPostBinding>(),
         loadPage(nextPageUrl)
     }
 
+    private fun setupActionBar() {
+        val activity = requireActivity()
+        if (activity is AppCompatActivity) {
+            activity.setSupportActionBar(binding.toolbar)
+
+            activity.addMenuProvider(MyMenuProvider(), viewLifecycleOwner)
+        }
+    }
+
     private fun loadPage(url: String? = null) {
         launch {
             try {
                 binding.swipeRefreshLayout.isRefreshing = true
-                val data = withContext(Dispatchers.IO) { Client.getSubscribedPostData(url) }
+                val data = withContext(Dispatchers.IO) {
+                    if (PreferenceRepository.showSupportingOnly) {
+                        Client.getSupportingPostData(url)
+                    } else {
+                        Client.getSubscribedPostData(url)
+                    }
+                }
                 val list = data.items
                 if (url == null) {
                     // 第一页
+                    adapter.submitList(emptyList())
                     adapter.submitList(list)
                 } else {
                     adapter.addAll(list)
@@ -123,5 +127,24 @@ class AllPostFragment : BaseFragment<FragmentAllPostBinding>(),
     override fun onDestroy() {
         super.onDestroy()
         cancel()
+    }
+
+    private inner class MyMenuProvider : MenuProvider {
+        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+            menuInflater.inflate(R.menu.menu_all_post_fragment, menu)
+            menu.findItem(R.id.menu_all_post_fragment_show_supporting_only).isChecked =
+                PreferenceRepository.showSupportingOnly
+        }
+
+        override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+            when (menuItem.itemId) {
+                R.id.menu_all_post_fragment_show_supporting_only -> {
+                    menuItem.isChecked = !menuItem.isChecked
+                    PreferenceRepository.showSupportingOnly = menuItem.isChecked
+                    loadPage()
+                }
+            }
+            return true
+        }
     }
 }
