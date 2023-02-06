@@ -22,7 +22,7 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorSurface"
                 android:theme="?attr/dynamicColorThemeOverlay"
-                app:popupTheme="@style/AppTheme.PopupOverlay"
+                app:popupTheme="@style/Widget.Material3.PopupMenu.Overflow"
                 app:title="投稿" />
         </com.google.android.material.appbar.AppBarLayout>
 

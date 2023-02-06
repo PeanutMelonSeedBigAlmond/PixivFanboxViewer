@@ -3,6 +3,7 @@ package moe.peanutmelonseedbigalmond.pixivfanboxviewer.ui.fragment
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +22,7 @@ import cc.shinichi.library.bean.ImageInfo
 import cc.shinichi.library.view.ImagePreviewActivity
 import cc.shinichi.library.view.listener.OnDownloadClickListener
 import cc.shinichi.library.view.listener.SAFDirectoryPermissionListener
+import com.afollestad.materialdialogs.utils.MDUtil.isLandscape
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.dylanc.longan.arguments
@@ -68,6 +70,29 @@ class PostDetailFragment : BaseFragment<FragmentPostDetailBinding>(),
                 bottomMargin = inserts.bottom
                 leftMargin = inserts.left
                 rightMargin = inserts.right
+            }
+            return@setOnApplyWindowInsetsListener WindowInsetsCompat.CONSUMED
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.recyclerView) { v, _ ->
+            val context = requireContext()
+            // 横屏并且不在多窗口模式下，插入空白
+            val shouldUseInsets = context.isLandscape() &&
+                    !(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && requireActivity().isInMultiWindowMode)
+
+            if (shouldUseInsets) {
+                val minWidth = context.resources.getDimensionPixelSize(R.dimen.insets_on_landscape)
+                val displayMetrics = context.resources.displayMetrics
+                val width = displayMetrics.widthPixels
+                val height = displayMetrics.heightPixels
+
+                if (width > height && width > minWidth) {
+                    val expectedWidth = width.coerceAtMost(height.coerceAtLeast(minWidth))
+                    val padding =
+                        (width - expectedWidth).coerceAtLeast(0) / 2
+
+                    v.setPadding(padding.coerceAtLeast(0), 0, padding.coerceAtLeast(0), 0)
+                }
             }
             return@setOnApplyWindowInsetsListener WindowInsetsCompat.CONSUMED
         }

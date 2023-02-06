@@ -6,6 +6,10 @@
     <data>
 
         <variable
+            name="self"
+            type="moe.peanutmelonseedbigalmond.pixivfanboxviewer.ui.fragment.PostDetailFragment" />
+
+        <variable
             name="titleStr"
             type="String" />
 
@@ -59,10 +63,10 @@
             app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:padding="16dp"
                 android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:padding="16dp" />
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

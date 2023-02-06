@@ -5,6 +5,8 @@ import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.marginLeft
+import androidx.core.view.marginRight
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -14,13 +16,11 @@ import com.bumptech.glide.request.RequestOptions
 import com.chad.library.adapter.base.BaseMultiItemAdapter
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.App
 import moe.peanutmelonseedbigalmond.pixivfanboxviewer.R
-import moe.peanutmelonseedbigalmond.pixivfanboxviewer.databinding.LayoutPostDetailEmbedFanboxBinding
-import moe.peanutmelonseedbigalmond.pixivfanboxviewer.databinding.LayoutPostDetailFileBinding
-import moe.peanutmelonseedbigalmond.pixivfanboxviewer.databinding.LayoutPostDetailImageBinding
-import moe.peanutmelonseedbigalmond.pixivfanboxviewer.databinding.LayoutPostDetailParagraphHeaderBinding
-import moe.peanutmelonseedbigalmond.pixivfanboxviewer.databinding.LayoutPostDetailPragraphBinding
-import moe.peanutmelonseedbigalmond.pixivfanboxviewer.databinding.LayoutPostDetailUrlEmbedWithBrowserBinding
-import moe.peanutmelonseedbigalmond.pixivfanboxviewer.network.response.*
+import moe.peanutmelonseedbigalmond.pixivfanboxviewer.databinding.*
+import moe.peanutmelonseedbigalmond.pixivfanboxviewer.network.response.FileMapData
+import moe.peanutmelonseedbigalmond.pixivfanboxviewer.network.response.ImageMapData
+import moe.peanutmelonseedbigalmond.pixivfanboxviewer.network.response.PostBodyBlockData
+import moe.peanutmelonseedbigalmond.pixivfanboxviewer.network.response.UrlEmbedMapData
 import org.jsoup.Jsoup
 
 class PostDetailContentAdapter(
@@ -95,7 +95,8 @@ class PostDetailContentAdapter(
                         val extraDataId = item?.content!!
                         val imageItem = images[extraDataId]
 
-                        val viewWidth = recyclerView.width
+                        val viewWidth =
+                            recyclerView.width - recyclerView.paddingLeft - recyclerView.paddingRight - recyclerView.marginRight - recyclerView.marginLeft
                         val height =
                             (viewWidth.toDouble() * imageItem!!.height / imageItem.width).toInt()
                         holder.viewBinding.imageView.updateLayoutParams {
